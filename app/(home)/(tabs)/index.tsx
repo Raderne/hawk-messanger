@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { ChannelList } from "stream-chat-expo";
 import { router } from "expo-router";
 
