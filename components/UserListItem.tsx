@@ -40,7 +40,7 @@ export default function UserListItem({ user }: { user: User }) {
           uri: supabase.storage.from("avatars").getPublicUrl(user?.avatar_url)
             .data.publicUrl,
         }}
-        style={{ width: 50, height: 50, borderRadius: 25 }}
+        style={{ width: 50, height: 50, borderRadius: 5 }}
       />
       <Text style={{ fontWeight: "600", fontSize: 34 }}>{user.full_name}</Text>
     </Pressable>
