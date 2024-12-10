@@ -4,11 +4,13 @@ import { StreamChat } from "stream-chat";
 import { Chat, OverlayProvider } from "stream-chat-expo";
 import { useAuth } from "./authProvider";
 import { Redirect } from "expo-router";
+import { supabase } from "@/lib/supabase";
 
 const apiKey = process.env.EXPO_PUBLIC_STREAM_API_KEY;
 if (!apiKey) {
   throw new Error("Missing Stream API key");
 }
+
 const client = StreamChat.getInstance(apiKey);
 
 export default function ChatProvider({ children }: PropsWithChildren) {
@@ -23,35 +25,39 @@ export default function ChatProvider({ children }: PropsWithChildren) {
     const connect = async () => {
       await client.connectUser(
         {
-          id: profile?.id,
-          name: profile?.full_name,
-          image: "https://i.imgur.com/fR9Jz14.png",
+          id: profile.id,
+          name: profile.full_name,
+          image: supabase.storage
+            .from("avatars")
+            .getPublicUrl(profile.avatar_url).data.publicUrl,
         },
-        client.devToken(profile?.id)
+        client.devToken(profile.id)
       );
 
-      setIsReady(true);
-
-      /**
-       *  Channel created using a channel id
-       */
-      // const channel = client.channel("messaging", "the_park", {
-      //   name: "The Park",
+      // /**
+      //  *  Channel created using a channel id
+      //  */
+      // const channel = client.channel("messaging", "the_test", {
+      //   name: "The Test",
       // });
       // await channel.watch();
+
+      setIsReady(true);
     };
 
     connect();
 
     return () => {
-      client.disconnectUser();
+      if (isReady) {
+        client.disconnectUser();
+      }
       setIsReady(false);
     };
   }, [profile?.id]);
 
-  if (!isReady) {
-    return <ActivityIndicator />;
-  }
+  // if (!isReady) {
+  //   return <ActivityIndicator />;
+  // }
 
   return (
     <OverlayProvider>
