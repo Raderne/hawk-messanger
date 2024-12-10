@@ -1,14 +1,26 @@
 import { ChannelList } from "stream-chat-expo";
-import { router } from "expo-router";
+import { Link, router, Stack } from "expo-router";
 import { useAuth } from "@/providers/authProvider";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 export default function MainTabScreen() {
   const { user } = useAuth();
 
   return (
-    <ChannelList
-      filters={{ members: { $in: user ? [user.id] : [] } }}
-      onSelect={(channel) => router.push(`/(home)/channel/${channel.cid}`)}
-    />
+    <>
+      <Stack.Screen
+        options={{
+          headerRight: () => (
+            <Link href={"/(home)/users"} style={{ padding: 10 }} asChild>
+              <FontAwesome5 name="users" size={22} color="gray" />
+            </Link>
+          ),
+        }}
+      />
+      <ChannelList
+        filters={{ members: { $in: user ? [user.id] : [] } }}
+        onSelect={(channel) => router.push(`/(home)/channel/${channel.cid}`)}
+      />
+    </>
   );
 }
